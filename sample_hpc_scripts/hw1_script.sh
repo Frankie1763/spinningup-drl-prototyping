@@ -27,4 +27,4 @@ module load anaconda3
 source activate drl
 
 echo ${SLURM_ARRAY_TASK_ID}
-python sample_job_array_grid.py --setting ${SLURM_ARRAY_TASK_ID}
+python hw1_grid.py --setting ${SLURM_ARRAY_TASK_ID}
