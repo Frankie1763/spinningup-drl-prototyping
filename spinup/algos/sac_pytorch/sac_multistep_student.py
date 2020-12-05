@@ -63,7 +63,7 @@ class MultistepReplayBuffer:
         data will get stored in the pointer's location
         data should NOT be in tensor format.
         it's easier if you get data from environment
-        then just store them with the geiven format
+        then just store them with the given format
         """
         # first we store them in temporary buffers
         self.obs1_temp_buf[self.temp_ptr] = obs
@@ -123,6 +123,8 @@ class MultistepReplayBuffer:
         sum_discounted_reward = 0
         # TODO given a list of rewards (the rewards you get in the next few steps)
         #  write code here to compute sum of discounted rewards (very easy)
+        for i in len(reward_list):
+            sum_discounted_reward += (gamma**i)*reward_list[i]
         return sum_discounted_reward
 
     def sample_batch(self, batch_size=32, idxs=None):
