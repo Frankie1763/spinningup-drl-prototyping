@@ -40,9 +40,9 @@ if __name__ == '__main__':
     #SBATCH --array=0-<number of jobs - 1>
     """
     setting_names = ['env_name',
-                     'seed', 'lr']
-    settings = [['Humanoid-v2', 'Ant-v2', 'HalfCheetah-v2', 'Hopper-v2', 'Swimmer-v2', 'Walker2d-v2'],
-               [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                     'seed', 'lr', ]
+    settings = [['Ant-v2', 'Hopper-v2'],
+               [0, 1, 2, 3],
                 [0.3, 0.5]]
     whether_add_to_savename = [True, False, True]
     setting_savename_prefix = ['', '', 'learning_rate']

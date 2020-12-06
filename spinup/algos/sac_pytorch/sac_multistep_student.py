@@ -353,8 +353,8 @@ def sac_multistep(env_fn, hidden_sizes=[256, 256], seed=0,
 
             """
             now we do a SAC update, following the OpenAI spinup doc
-            check the openai sac document psudocode part for reference
-            line nubmers indicate lines in psudocode part
+            check the openai sac document pseudocode part for reference
+            line numbers indicate lines in pseudocode part
             we will first compute each of the losses
             and then update all the networks in the end
             """
@@ -366,13 +366,15 @@ def sac_multistep(env_fn, hidden_sizes=[256, 256], seed=0,
                 q1_next = q1_target_net(torch.cat([obs_next_tensor, a_tilda_next], 1))
                 q2_next = q2_target_net(torch.cat([obs_next_tensor, a_tilda_next], 1))
 
-                # TODO: compute the k-step Q estiamte (in the form of reward + next Q), don't worry about the entropy terms
+                # TODO: compute the k-step Q estimate (in the form of reward + next Q), don't worry about the entropy terms
                 if use_single_variant:
                     # write code for computing the k-step estimate for the single Q estimate variant case
-                    y_q = None
+                    powers = np.arange(multistep_k)
+                    y_q = rews_tensor * (gamma**powers) + (gamma**multistep_k) * (1 - done_tensor) * q1_next
                 else:
                     # write code for computing the k-step estimate while using double clipped Q
-                    y_q = None
+                    powers = np.arange(multistep_k)
+                    y_q = rews_tensor * (gamma**powers) + (gamma**multistep_k) * (1 - done_tensor) * min(q1_next, q2_next)
 
                 # add the entropy, with a simplied heuristic way
                 # NOTE: you don't need to modify the following 3 lines. They deal with entropy terms
@@ -397,9 +399,9 @@ def sac_multistep(env_fn, hidden_sizes=[256, 256], seed=0,
 
             # TODO write code here to compute policy loss correctly, for both variants.
             if use_single_variant:
-                q_policy_part = None
+                q_policy_part = q1_a_tilda
             else:
-                q_policy_part = None
+                q_policy_part = min(q1_a_tilda, q2_a_tilda)
 
             # Jπ = 𝔼st∼D,εt∼N[α * logπ(f(εt;st)|st) − Q(st,f(εt;st))]
             policy_loss = (alpha * log_prob_a_tilda - q_policy_part).mean()
@@ -488,6 +490,50 @@ def sac_multistep(env_fn, hidden_sizes=[256, 256], seed=0,
             #  initialize another environment that is only used for provide such a bias estimate
             #  store that to logger
 
+
+            def estimate_bias(n=1, use_single_variant=False, k=multistep_k):
+                """
+                run n episodes and calculate the mc_return and estimated_q for each appearing states
+                drop last multistep_k data point of each episode
+                calculate the q bias using mean(mc_return)-mean(estimated_q)
+                return q bias and mean(estimated_q)
+                """
+                state_num, mc_ret, est_q = 0, 0, 0
+                for j in range(n):
+                    o, r, d, ep_len, ep_mc_ret, reward_list, q_list = bias_test_env.reset(), 0, False, 0, 0, [], []
+                    while not (d or (ep_len == max_ep_len)):
+                        # Take stochastic actions
+                        a = policy_net.get_env_action(o, deterministic=False)
+                        q1 = q1_net(torch.cat([o, a], 1))
+                        q2 = q2_net(torch.cat([o, a], 1))
+                        # add estimated q for each state to q_list
+                        if use_single_variant:
+                            q_list.append(min(q1, q2))
+                        else:
+                            q_list.append(q1)
+                        o, r, d, _ = bias_test_env.step(a)
+                        # store each r in reward_list
+                        reward_list.append(r)
+                        ep_len += 1
+                    # drop last multistep_k terms of the reward list and q list
+                    reward_list = reward_list[:-k]
+                    q_list = q_list[:-k]
+                    # calculate the sum of all mc_returns for each state in the episode
+                    for i in range(len(reward_list)):
+                        powers = np.arange(len(reward_list)-i)
+                        ep_mc_ret += sum((gamma**powers)*np.array(reward_list[i:]))
+                    # update mc_ret and est_q
+                    mc_ret = (state_num*mc_ret + ep_mc_ret)/(state_num+ep_len)
+                    est_q = (state_num*est_q + sum(q_list))/(state_num+ep_len)
+                # calculate bias
+                return mc_ret-est_q, est_q
+
+            bias_test_env = env_fn()
+            bias_test_env.seed(seed + 10000)
+            bias_test_env.action_space.np_random.seed(seed + 10000)
+            bias, est_q = estimate_bias(n=1, use_single_variant=use_single_variant, k=multistep_k)
+            
+
             # Log info about epoch
             logger.log_tabular('Epoch', epoch)
             logger.log_tabular('EpRet', with_min_and_max=True)
@@ -506,6 +552,10 @@ def sac_multistep(env_fn, hidden_sizes=[256, 256], seed=0,
 
             # TODO after you store bias info to logger, you should also write code here to log them
             #  so that you can later plot them
+            logger.log_tabular('QBias', bias)
+            logger.log_tabular('QVals', est_q)
+            logger.log_tabular('K', multistep_k)
+
 
             logger.log_tabular('Time', time.time()-start_time)
             logger.dump_tabular()
