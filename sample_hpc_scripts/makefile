@@ -1,0 +1,2 @@
+clean:
+	rm *.err *.out

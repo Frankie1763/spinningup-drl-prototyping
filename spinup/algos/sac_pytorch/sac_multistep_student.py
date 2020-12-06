@@ -123,7 +123,7 @@ class MultistepReplayBuffer:
         sum_discounted_reward = 0
         # TODO given a list of rewards (the rewards you get in the next few steps)
         #  write code here to compute sum of discounted rewards (very easy)
-        for i in len(reward_list):
+        for i in range(len(reward_list)):
             sum_discounted_reward += (gamma**i)*reward_list[i]
         return sum_discounted_reward
 
@@ -365,17 +365,15 @@ def sac_multistep(env_fn, hidden_sizes=[256, 256], seed=0,
                 a_tilda_next, _, _, log_prob_a_tilda_next, _, _ = policy_net.forward(obs_next_tensor)
                 q1_next = q1_target_net(torch.cat([obs_next_tensor, a_tilda_next], 1))
                 q2_next = q2_target_net(torch.cat([obs_next_tensor, a_tilda_next], 1))
-
                 # TODO: compute the k-step Q estimate (in the form of reward + next Q), don't worry about the entropy terms
                 if use_single_variant:
                     # write code for computing the k-step estimate for the single Q estimate variant case
                     powers = np.arange(multistep_k)
-                    y_q = rews_tensor * (gamma**powers) + (gamma**multistep_k) * (1 - done_tensor) * q1_next
+                    y_q = (rews_tensor * Tensor(gamma**powers) + (gamma**multistep_k) * (1 - done_tensor) * q1_next).float()
                 else:
                     # write code for computing the k-step estimate while using double clipped Q
                     powers = np.arange(multistep_k)
-                    y_q = rews_tensor * (gamma**powers) + (gamma**multistep_k) * (1 - done_tensor) * min(q1_next, q2_next)
-
+                    y_q = (rews_tensor * Tensor(gamma**powers) + (gamma**multistep_k) * (1 - done_tensor) * torch.min(q1_next, q2_next)).float()
                 # add the entropy, with a simplied heuristic way
                 # NOTE: you don't need to modify the following 3 lines. They deal with entropy terms
                 powers = np.arange(1, multistep_k+1)
@@ -401,8 +399,7 @@ def sac_multistep(env_fn, hidden_sizes=[256, 256], seed=0,
             if use_single_variant:
                 q_policy_part = q1_a_tilda
             else:
-                q_policy_part = min(q1_a_tilda, q2_a_tilda)
-
+                q_policy_part = torch.min(q1_a_tilda, q2_a_tilda)
             # Jπ = 𝔼st∼D,εt∼N[α * logπ(f(εt;st)|st) − Q(st,f(εt;st))]
             policy_loss = (alpha * log_prob_a_tilda - q_policy_part).mean()
 
@@ -504,13 +501,13 @@ def sac_multistep(env_fn, hidden_sizes=[256, 256], seed=0,
                     while not (d or (ep_len == max_ep_len)):
                         # Take stochastic actions
                         a = policy_net.get_env_action(o, deterministic=False)
-                        q1 = q1_net(torch.cat([o, a], 1))
-                        q2 = q2_net(torch.cat([o, a], 1))
+                        q1 = q1_net(torch.cat([Tensor([o]), Tensor([a])], 1)).item()
+                        q2 = q2_net(torch.cat([Tensor([o]), Tensor([a])], 1)).item()
                         # add estimated q for each state to q_list
                         if use_single_variant:
-                            q_list.append(min(q1, q2))
-                        else:
                             q_list.append(q1)
+                        else:
+                            q_list.append(min(q1,q2))
                         o, r, d, _ = bias_test_env.step(a)
                         # store each r in reward_list
                         reward_list.append(r)
