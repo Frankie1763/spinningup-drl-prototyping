@@ -41,16 +41,14 @@ if __name__ == '__main__':
     """
     setting_names = ['env_name',
                      'seed',
-                     'use_single_variant',
-                     'multistep_k'
+                     'multistep_k',
                      ]
-    settings = [['Ant-v2', 'Hopper-v2'],
-               [0, 1, 2, 3],
-               [False, True],
-               [1, 5]
+    settings = [['Ant-v2',],
+               [0, 1,],
+               [5],
                ]
-    whether_add_to_savename = [True, False, True, True]
-    setting_savename_prefix = ['', '', 'single_','k_']
+    whether_add_to_savename = [True, False,True]
+    setting_savename_prefix = ['', '','k_']
     # setting_names = ['env_name',
     #                  'seed',
     #                  'use_single_variant',

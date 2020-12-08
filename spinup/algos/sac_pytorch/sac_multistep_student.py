@@ -90,7 +90,7 @@ class MultistepReplayBuffer:
                 # compute sum of discounted reward
                 reward_list = []
                 reward_temp_ptr = start_temp_ptr
-                for i in range(n_steps):
+                for _ in range(n_steps):
                     reward_list.append(self.rews_temp_buf[reward_temp_ptr])
                     reward_temp_ptr = (reward_temp_ptr + 1) % self.temp_max_size
 
@@ -368,12 +368,10 @@ def sac_multistep(env_fn, hidden_sizes=[256, 256], seed=0,
                 # TODO: compute the k-step Q estimate (in the form of reward + next Q), don't worry about the entropy terms
                 if use_single_variant:
                     # write code for computing the k-step estimate for the single Q estimate variant case
-                    powers = np.arange(multistep_k)
-                    y_q = (rews_tensor * Tensor(gamma**powers) + (gamma**multistep_k) * (1 - done_tensor) * q1_next).float()
+                    y_q = (rews_tensor + (gamma**multistep_k) * (1 - done_tensor) * q1_next).float()
                 else:
                     # write code for computing the k-step estimate while using double clipped Q
-                    powers = np.arange(multistep_k)
-                    y_q = (rews_tensor * Tensor(gamma**powers) + (gamma**multistep_k) * (1 - done_tensor) * torch.min(q1_next, q2_next)).float()
+                    y_q = (rews_tensor + (gamma**multistep_k) * (1 - done_tensor) * torch.min(q1_next, q2_next)).float()
                 # add the entropy, with a simplied heuristic way
                 # NOTE: you don't need to modify the following 3 lines. They deal with entropy terms
                 powers = np.arange(1, multistep_k+1)
@@ -496,7 +494,7 @@ def sac_multistep(env_fn, hidden_sizes=[256, 256], seed=0,
                 return q bias and mean(estimated_q)
                 """
                 state_num, mc_ret, est_q = 0, 0, 0
-                for j in range(n):
+                for _ in range(n):
                     o, r, d, ep_len, ep_mc_ret, reward_list, q_list = bias_test_env.reset(), 0, False, 0, 0, [], []
                     while not (d or (ep_len == max_ep_len)):
                         # Take stochastic actions
