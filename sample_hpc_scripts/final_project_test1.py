@@ -50,7 +50,7 @@ if __name__ == '__main__':
                [1, 5]
                ]
     whether_add_to_savename = [True, False, True, True]
-    setting_savename_prefix = ['', '', 'single_','k_']
+    setting_savename_prefix = ['', '', 'single','k_']
     # setting_names = ['env_name',
     #                  'seed',
     #                  'use_single_variant',
