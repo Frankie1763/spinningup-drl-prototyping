@@ -502,10 +502,10 @@ def sac_multistep(env_fn, hidden_sizes=[256, 256], seed=0,
                         q1 = q1_net(torch.cat([Tensor([o]), Tensor([a])], 1)).item()
                         q2 = q2_net(torch.cat([Tensor([o]), Tensor([a])], 1)).item()
                         # add estimated q for each state to q_list
-                        if use_single_variant:
-                            q_list.append(q1)
-                        else:
-                            q_list.append(min(q1,q2))
+                        # if use_single_variant:
+                        q_list.append(q1)
+                        # else:
+                        #     q_list.append(min(q1,q2))
                         o, r, d, _ = bias_test_env.step(a)
                         # store each r in reward_list
                         reward_list.append(r)
