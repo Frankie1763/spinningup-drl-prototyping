@@ -368,10 +368,10 @@ def sac_multistep(env_fn, hidden_sizes=[256, 256], seed=0,
                 # TODO: compute the k-step Q estimate (in the form of reward + next Q), don't worry about the entropy terms
                 if use_single_variant:
                     # write code for computing the k-step estimate for the single Q estimate variant case
-                    y_q = (rews_tensor + (gamma**multistep_k) * (1 - done_tensor) * q1_next).float()
+                    y_q = rews_tensor + (gamma**multistep_k) * (1 - done_tensor) * q1_next
                 else:
                     # write code for computing the k-step estimate while using double clipped Q
-                    y_q = (rews_tensor + (gamma**multistep_k) * (1 - done_tensor) * torch.min(q1_next, q2_next)).float()
+                    y_q = rews_tensor + (gamma**multistep_k) * (1 - done_tensor) * torch.min(q1_next, q2_next)
                 # add the entropy, with a simplied heuristic way
                 # NOTE: you don't need to modify the following 3 lines. They deal with entropy terms
                 powers = np.arange(1, multistep_k+1)
