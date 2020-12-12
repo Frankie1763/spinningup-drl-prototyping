@@ -51,18 +51,6 @@ if __name__ == '__main__':
                ]
     whether_add_to_savename = [True, False, True, True]
     setting_savename_prefix = ['', '', 'single','k_']
-    # setting_names = ['env_name',
-    #                  'seed',
-    #                  'use_single_variant',
-    #                  'multistep_k'
-    #                  ]
-    # settings = [['Ant-v2'],
-    #            [0, 1],
-    #            [True],
-    #            [5]
-    #            ]
-    # whether_add_to_savename = [True, False, True, True]
-    # setting_savename_prefix = ['', '','use_single_variant','multistep_k']
 
     n_setting = len(setting_names)
     assert_correct = (len(settings) == n_setting and len(whether_add_to_savename)==n_setting and len(setting_savename_prefix)==n_setting)
