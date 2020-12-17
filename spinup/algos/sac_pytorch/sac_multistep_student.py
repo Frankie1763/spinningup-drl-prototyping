@@ -90,7 +90,7 @@ class MultistepReplayBuffer:
                 # compute sum of discounted reward
                 reward_list = []
                 reward_temp_ptr = start_temp_ptr
-                for j in range(n_steps):
+                for _ in range(n_steps):
                     reward_list.append(self.rews_temp_buf[reward_temp_ptr])
                     reward_temp_ptr = (reward_temp_ptr + 1) % self.temp_max_size
 
@@ -120,12 +120,12 @@ class MultistepReplayBuffer:
             pass
 
     def compute_sum_discounted_reward_from_reward_list(self, reward_list, gamma):
+        sum_discounted_reward = 0
         # TODO given a list of rewards (the rewards you get in the next few steps)
         #  write code here to compute sum of discounted rewards (very easy)
-        n = len(reward_list)
-        w = np.array([gamma ** i for i in range(n)])
-        return np.sum(np.array(reward_list) * w)
-
+        for i in range(len(reward_list)):
+            sum_discounted_reward += (gamma**i)*reward_list[i]
+        return sum_discounted_reward
 
     def sample_batch(self, batch_size=32, idxs=None):
         ## sample with replacement from buffer

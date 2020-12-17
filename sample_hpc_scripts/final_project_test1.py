@@ -47,7 +47,7 @@ if __name__ == '__main__':
     settings = [['Ant-v2', 'Hopper-v2'],
                [0, 1, 2, 3],
                [False, True],
-               [1, 5, 2, 8]
+               [1, 5]
                ]
     whether_add_to_savename = [True, False, True, True]
     setting_savename_prefix = ['', '', 'single','k_']
