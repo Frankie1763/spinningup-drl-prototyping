@@ -510,9 +510,9 @@ def sac_multistep(env_fn, hidden_sizes=[256, 256], seed=0,
                         # store each r in reward_list
                         reward_list.append(r)
                         ep_len += 1
-                    # drop last multistep_k terms of the reward list and q list
-                    reward_list = reward_list[:-k]
-                    q_list = q_list[:-k]
+                    # drop last 200 terms of the reward list and q list
+                    reward_list = reward_list[:-200]
+                    q_list = q_list[:-200]
                     # calculate the sum of all mc_returns for each state in the episode
                     for i in range(len(reward_list)):
                         powers = np.arange(len(reward_list)-i)
@@ -521,7 +521,7 @@ def sac_multistep(env_fn, hidden_sizes=[256, 256], seed=0,
                     mc_ret = (state_num*mc_ret + ep_mc_ret)/(state_num+ep_len)
                     est_q = (state_num*est_q + sum(q_list))/(state_num+ep_len)
                 # calculate bias
-                return mc_ret-est_q, est_q
+                return est_q-mc_ret, est_q
 
             bias_test_env = env_fn()
             bias_test_env.seed(seed + 10000)

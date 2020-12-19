@@ -6,7 +6,7 @@ plot_ant:
 	--legend SAC MSAC-5 SAC-Single MSAC-Single-5 \
 	--xlabel timestep \
 	--value Performance \
-	--ylabel Performance \
+	--ylabel Performance-ant \
 
 plot_ant_qbias:
 	python -m spinup.run plot -s 10 \
@@ -14,7 +14,7 @@ plot_ant_qbias:
 	--legend SAC MSAC-5 SAC-Single MSAC-Single-5 \
 	--xlabel timestep \
 	--value QBias \
-	--ylabel QBias \
+	--ylabel QBias-ant \
 
 plot_ant_qvals:
 	python -m spinup.run plot -s 10 \
@@ -22,7 +22,7 @@ plot_ant_qvals:
 	--legend SAC MSAC-5 SAC-Single MSAC-Single-5 \
 	--xlabel timestep \
 	--value QVals \
-	--ylabel QVals \
+	--ylabel QVals-ant \
 
 plot_hopper:
 	python -m spinup.run plot -s 10 \
@@ -30,7 +30,7 @@ plot_hopper:
 	--legend SAC MSAC-5 SAC-Single MSAC-Single-5 \
 	--xlabel timestep \
 	--value Performance \
-	--ylabel Performance \
+	--ylabel Performance-hopper \
 
 plot_hopper_qbias:
 	python -m spinup.run plot -s 10 \
@@ -38,7 +38,7 @@ plot_hopper_qbias:
 	--legend SAC MSAC-5 SAC-Single MSAC-Single-5 \
 	--xlabel timestep \
 	--value QBias \
-	--ylabel QBias \
+	--ylabel QBias-hopper \
 
 plot_hopper_qvals:
 	python -m spinup.run plot -s 10 \
@@ -46,7 +46,7 @@ plot_hopper_qvals:
 	--legend SAC MSAC-5 SAC-Single MSAC-Single-5 \
 	--xlabel timestep \
 	--value QVals \
-	--ylabel QVals \
+	--ylabel QVals-hopper \
 
 plot_ant_k:
 	python -m spinup.run plot -s 10 \
@@ -54,7 +54,7 @@ plot_ant_k:
 	--legend SAC-Single MSAC-Single-2 MSAC-Single-5 MSAC-Single-8 \
 	--xlabel timestep \
 	--value Performance \
-	--ylabel Performance \
+	--ylabel Performance-ant \
 
 plot_ant_k_qbias:
 	python -m spinup.run plot -s 10 \
@@ -62,7 +62,7 @@ plot_ant_k_qbias:
 	--legend SAC-Single MSAC-Single-2 MSAC-Single-5 MSAC-Single-8 \
 	--xlabel timestep \
 	--value QBias \
-	--ylabel QBias \
+	--ylabel QBias-ant \
 
 plot_ant_k_qvals:
 	python -m spinup.run plot -s 10 \
@@ -70,7 +70,7 @@ plot_ant_k_qvals:
 	--legend SAC-Single MSAC-Single-2 MSAC-Single-5 MSAC-Single-8 \
 	--xlabel timestep \
 	--value QVals \
-	--ylabel QVals\
+	--ylabel QVals-ant\
 
 plot_hopper_k:
 	python -m spinup.run plot -s 10 \
@@ -78,7 +78,7 @@ plot_hopper_k:
 	--legend SAC-Single MSAC-Single-2 MSAC-Single-5 MSAC-Single-8 \
 	--xlabel timestep \
 	--value Performance \
-	--ylabel Performance \
+	--ylabel Performance-hopper \
 
 plot_hopper_k_qbias:
 	python -m spinup.run plot -s 10 \
@@ -86,7 +86,7 @@ plot_hopper_k_qbias:
 	--legend SAC-Single MSAC-Single-2 MSAC-Single-5 MSAC-Single-8 \
 	--xlabel timestep \
 	--value QBias \
-	--ylabel QBias \
+	--ylabel QBias-hopper \
 
 plot_hopper_k_qvals:
 	python -m spinup.run plot -s 10 \
@@ -94,4 +94,4 @@ plot_hopper_k_qvals:
 	--legend SAC-Single MSAC-Single-2 MSAC-Single-5 MSAC-Single-8 \
 	--xlabel timestep \
 	--value QVals \
-	--ylabel QVals \
+	--ylabel QVals-hopper \
